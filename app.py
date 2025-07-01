@@ -3,7 +3,7 @@ import joblib
 import numpy as np
 
 app = Flask(__name__)
-model = joblib.load("gesture_model.pkl")
+model = joblib.load("joystick_gesture_model.pkl")
 
 @app.route("/", methods=["GET"])
 def index():
