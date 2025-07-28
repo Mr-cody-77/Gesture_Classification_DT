@@ -7,7 +7,8 @@ app = Flask(__name__)
 
 # Load the model safely
 try:
-    model = joblib.load("joystick_gesture_model.pkl")
+    model = joblib.load("gesture_model.pkl")
+    print("✅ Model loaded successfully")
 except Exception as e:
     print("❌ Error loading model:", e)
     model = None
@@ -20,17 +21,17 @@ def index():
 def predict():
     try:
         data = request.get_json()
-        vx = data.get("Vx")
-        vy = data.get("Vy")
 
-        if vx is None or vy is None:
-            return jsonify({"error": "Missing Vx or Vy"}), 400
+        # Extract all features (support for more than just Vx, Vy)
+        features = data.get("features")
 
-        # Ensure model is loaded
+        if features is None or not isinstance(features, list):
+            return jsonify({"error": "Missing or invalid 'features' field"}), 400
+
         if model is None:
             return jsonify({"error": "Model not loaded"}), 500
 
-        prediction = model.predict([[vx, vy]])
+        prediction = model.predict([features])
         return jsonify({"gesture": prediction[0]})
 
     except Exception as e:
